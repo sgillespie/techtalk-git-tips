@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Git Tips and Tricks</title>
+
+    <meta name="description" content="Tips for getting more out of git">
+    <meta name="author" content="Sean Gillespie">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    
+    <link rel="stylesheet" href="bower_components/reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="bower_components/reveal.js/css/theme/black.css" id="theme">
+    
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="bower_components/reveal.js/lib/css/zenburn.css">
+    <!-- Printing and PDF exports -->
+    <script>
+     var link = document.createElement('link');
+     link.rel = 'stylesheet';
+     link.type = 'text/css';
+     link.href = window.location.search.match( /print-pdf/gi ) ? 'bower_components/reveal.js/css/print/pdf.css' : 'bower_components/reveal.js/css/print/paper.css';
+     document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="reveal">
+      
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+	<section>
+	  <h1>Git Tips and Tricks</h1>
+	  <p>
+	    <small><a href="https://github.com/sgillespie">Sean Gillespie</a></small>
+	  </p>
+	</section>
+        
+	<section>
+	  <h2>Tip: Understand Git Architecture</h2>
+	  <p>
+            <img src="images/basic-branching.png" style="max-width: 60%; max-height: 60%"/>
+	  </p>
+	</section>
+
+        <section>
+	  <h2>Git Architecture</h2>
+	  <p>Git stores history as a directed acyclic graph (DAG).</p>
+          <ul>
+            <li>Each commit points to a previous commit</li>
+            <li>merge commits points to two or more commits</li>
+            <li>Merging brings in the ENTIRE history of each branch</li>
+          </ul>
+          <p>Think about what you're doing to the history graph before you merge or rebase!</p>
+	</section>
+
+        <section>
+          <h2>Tip: Read the Manpages</h2>
+          <p>Git's built in documentation is the best resource for individual git commands</p>
+          <p><pre><code data-trim contenteditable>git help --all
+git help --guide
+git merge --help</code></pre></p>
+        </section>
+        
+        <section>
+          <h2>Tip: Use merge/rebase instead of pull</h2>
+          <p>Pull is a complex command.  It performs two operations:</p>
+          <ul>
+            <li>fetch</li>
+            <li>merges or rebases from origin</li>
+          </ul>
+          <p>Run these commands yourself; You can be explicit about how these operations are done</p>
+        </section>
+
+        <section>
+          <h2>Fetch</h2>
+          <p>Fetch downloads all history from a remote repository</p>
+          <p>
+            <ul>
+              <li>Only downloads what's new</li>
+              <li>Includes branches, tags, and reachable refs</li>
+              <li>Stores remote refs in ./.git/remotes</li>
+            </ul>
+          </p>
+          <pre><code data-trim contenteditable>git fetch
+git fetch origin
+git fetch --all</code></pre>
+        </section>
+
+        <section>
+          <h2>FastForward Merge</h2>
+          <p><small>You have committed no local changes, and now you want to update to a newer
+            upstream revision. In this case, a new commit is not needed to store the
+            combined history; instead, the HEAD (along with the index) is updated to point
+            at the named commit, without creating an extra merge commit.</small></p>
+            
+          <p>Update your branch to the tracking branch</p>
+          <p>
+            <pre><code data-trim>git fetch
+git merge --ff-only</code></pre>
+          </p>
+          <p><small>The merge will be aborted if fastforward is not possible. In this case, you
+          should either rebase or do a non-fastforward merge</small></p>
+        </section>
+
+        <section>
+          <h2>Rebase</h2>
+          <p>Rebase unapplies your commits, fast-forwards, then reapplies your commits</p>
+          <p><pre><code data-trim>git rebase origin/master</code></pre></p>
+          <p><small>All changes made by commits in the current branch but that are not in <upstream> are saved to a temporary area. This is the same set of commits that would be shown by git log
+                upstream..HEAD</small></p>
+          <p>Do not use this if you have merged from the upstream without pushing!</p>
+        </section>
+
+        <section>
+          <h2>Non-FastForward Merge</h2>
+          <p>If the previous options don't work, then just do a regular merge</p>
+          <p><pre><code data-trim>git merge</code></pre></p>
+        </section>
+
+        <section>
+          <h2>Tip: Commit Often</h2>
+          <p>Commit all the time (borderline too often).</p>
+          <p><small>You can always clean up your
+          commits before pushing. This allows you to go back a previous state with no
+          consequences</small></p>
+        </section>
+
+        <section>
+          <h2>Interactive Rebasing</h2>
+          <p>Use interactive rebasing to clean up your commits before pushing</p>
+          <p><pre><code data-trim>git rebase --interactive origin/UPSTREAM</code></pre></p>
+          <p><pre><code data-trim>reword c78cd09 Refactor for es6/babel
+squash e93f4cf Refactor based on static analysis
+squash 2de2ce6 Refactor reducers
+
+# Commands:
+# p, pick = use commit
+# r, reword = use commit, but edit the commit message
+# e, edit = use commit, but stop for amending
+# s, squash = use commit, but meld into previous commit
+# f, fixup = like "squash", but discard this commit's log message
+# x, exec = run command (the rest of the line) using shell
+# d, drop = remove commitp</code></pre></p>
+        </section>
+
+        <section>
+          <h2>Tip: Use reflog</h2>
+          <p><small>Reference logs, or "reflogs", record when the tips of branches and
+              other references were updated in the local repository.</small></p>
+          <p>Use the reflog to go back to any ref you were working on</p>
+          <p><pre><code datatrim>git reflog</code></pre></p>
+          <p>
+            <pre><code datatrim>4c3b20b (HEAD -> master) HEAD@{0}: rebase -i (finish): returning to refs/heads/master
+4c3b20b (HEAD -> master) HEAD@{1}: rebase -i (squash): Refactor for es6/babel
+cb10626 HEAD@{2}: rebase -i (squash): # This is a combination of 2 commits.
+a9be7a1 HEAD@{3}: rebase -i (reword): Refactor for es6/babel
+c78cd09 HEAD@{4}: cherry-pick: fast-forward
+3f6cddd HEAD@{5}: rebase -i (start): checkout HEAD^^^
+2de2ce6 (origin/master) HEAD@{9}: rebase -i (pick): Refactor reducers</code></pre>
+          </p>
+
+          <p>Use this to fix stupid mistakes!</p>
+        </section>
+
+<section>
+  <h2>Tip: Use Aliases</h2>
+  <p>Use git aliases to reduce typing</p>
+  <p><pre><code datatrim>git config --global alias.co checkout
+git config --global alias.cl clone
+git config --global alias.fff '!git fetch && git merge --ff-only'</pre></code></p>
+  <p><pre><code datatrim>git co master
+git clone git@github.com/sgillespie/techtalk-git-tips
+git fff</pre></code></p>
+</section>  
+
+	<section style="text-align: left;">
+	  <h1>Resources</h1>
+	  <p>
+            <ul>
+              <li>https://git-scm.com/book/en/v1/</li>
+              <li>https://git-scm.com/doc</li>
+            </ul>
+	  </p>
+	</section>
+
+      </div>
+
+    </div>
+
+    <script src="bower_components/reveal.js/lib/js/head.min.js"></script>
+    <script src="bower_components/reveal.js/js/reveal.js"></script>
+
+    <script>
+
+     // Full list of configuration options available at:
+     // https://github.com/hakimel/reveal.js#configuration
+     Reveal.initialize({
+	 controls: true,
+	 progress: true,
+	 history: true,
+	 center: true,
+
+	 transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+	 // Optional reveal.js plugins
+	 dependencies: [
+	     { src: 'bower_components/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	     { src: 'bower_components/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	     { src: 'bower_components/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	     { src: 'bower_components/reveal.js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+	     { src: 'bower_components/reveal.js/plugin/zoom-js/zoom.js', async: true },
+	     { src: 'bower_components/reveal.js/plugin/notes/notes.js', async: true }
+	 ]
+     });
+
+    </script>
+
+  </body>
+</html>
