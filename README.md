@@ -14,7 +14,7 @@ Git stores history as a directed acyclic graph (DAG). This means:
 * Merge commits point to two or more commits
 * Merging brings in the ENTIRE history of each branch
 
-Think about how you're affecting the history graph before merging or rebasing!
+_Think about how you're affecting the history graph before merging or rebasing!_
 
 ## Tip: Read the Documentation
 Git's built-in documentation is the best resource for using git.
