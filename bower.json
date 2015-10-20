@@ -1,11 +1,11 @@
 {
   "name": "techtalk-git-tips",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/sgillespie/techtalk-git-tips",
   "authors": [
     "Sean Gillespie <sean@mistersg.net>"
   ],
-  "license": "MIT",
+  "license": "Creative Commons Attribution Non Commercial Share Alike 3.0 license",
   "ignore": [
     "**/.*",
     "node_modules",
