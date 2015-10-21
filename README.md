@@ -30,8 +30,7 @@ Pull is a complex command. It performs the following commands:
 * Merge from remote branch
 
 ...unless you have pull configured to rebase; in that case, it will
-do a rebase instead of merge! This can be effective, but also be
-painful at times:
+rebase instead of merge! This can be effective, but also painful at times:
 
 * Rebase requires a clean working tree. Otherwise, you'll have to commit
   or stash.
@@ -69,7 +68,7 @@ According to the git manual, it rebases these commits:
 > would be shown by git log upstream..HEAD
 
 ### Non-FastForward Merge
-If none of the previous options cannot be used, then just do a regular
+If none of the previous options cannot be used, just do a regular
 merge
 
     git merge
@@ -82,9 +81,12 @@ pushing. This has the following benefits:
 * It's much easier to combine commits than to split them up
 
 ### Interactive Rebasing
-Use an interactive rebase to clean up your commits before pushing.
+Use interactive rebase to clean up your commits before pushing.
 
     git rebase --interactive origin/UPSTREAM
+
+This will open up an editor and allow you to modify previous
+commits.
 
     reword c78cd09 Refactor for es6/babel
     squash e93f4cf Refactor based on static analysis
