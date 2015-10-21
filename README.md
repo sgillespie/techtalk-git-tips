@@ -67,10 +67,14 @@ According to the git manual, it rebases these commits:
 > are saved to a temporary area. This is the same set of commits that
 > would be shown by git log upstream..HEAD
 
+    git fetch
+    git rebase origin/UPSTREAM
+
 ### Non-FastForward Merge
 If none of the previous options cannot be used, just do a regular
 merge
 
+    git fetch
     git merge
 
 ## Tip: Commit Often
